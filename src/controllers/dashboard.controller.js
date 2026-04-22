@@ -96,18 +96,20 @@ exports.getBuildingAdminDashboard = async (req, res, next) => {
 
     // Recent complaints
     const recentComplaints = await query(
-      `SELECT TOP 5 c.ComplaintID, c.Title, c.Category, c.Priority, c.Status, c.CreatedAt, u.FullName AS RaisedBy
+      `SELECT c.ComplaintID, c.Title, c.Category, c.Priority, c.Status, c.CreatedAt, u.FullName AS RaisedBy
        FROM Complaints c JOIN Users u ON c.RaisedBy = u.UserID
-       WHERE c.BuildingID = @bid ORDER BY c.CreatedAt DESC`,
+       WHERE c.BuildingID = @bid ORDER BY c.CreatedAt DESC
+       LIMIT 5`,
       inputs
     );
 
     // Pending bills
     const pendingBills = await query(
-      `SELECT TOP 5 b.BillID, b.BillType, b.TotalAmount, b.DueDate, b.PaymentStatus, u.FullName AS ResidentName
+      `SELECT b.BillID, b.BillType, b.TotalAmount, b.DueDate, b.PaymentStatus, u.FullName AS ResidentName
        FROM Bills b JOIN Users u ON b.UserID = u.UserID
        WHERE b.BuildingID = @bid AND b.PaymentStatus IN ('Pending','Overdue')
-       ORDER BY b.DueDate ASC`,
+       ORDER BY b.DueDate ASC
+       LIMIT 5`,
       inputs
     );
 
@@ -148,12 +150,14 @@ exports.getResidentDashboard = async (req, res, next) => {
     ]);
 
     const pendingBills = await query(
-      `SELECT TOP 3 BillID, BillType, TotalAmount, DueDate, PaymentStatus FROM Bills
-       WHERE UserID = @uid AND PaymentStatus IN ('Pending','Overdue') ORDER BY DueDate ASC`,
+      `SELECT BillID, BillType, TotalAmount, DueDate, PaymentStatus FROM Bills
+       WHERE UserID = @uid AND PaymentStatus IN ('Pending','Overdue') ORDER BY DueDate ASC
+       LIMIT 3`,
       inputs
     );
     const recentComplaints = await query(
-      `SELECT TOP 3 ComplaintID, Title, Status, Priority, CreatedAt FROM Complaints WHERE RaisedBy = @uid ORDER BY CreatedAt DESC`,
+      `SELECT ComplaintID, Title, Status, Priority, CreatedAt FROM Complaints WHERE RaisedBy = @uid ORDER BY CreatedAt DESC
+       LIMIT 3`,
       inputs
     );
 

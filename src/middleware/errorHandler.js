@@ -9,15 +9,19 @@ const errorHandler = (err, req, res, next) => {
     user: req.user ? req.user.UserID : 'anonymous'
   });
 
-  // SQL Server errors
-  if (err.number) {
-    switch (err.number) {
-      case 2627: // Unique constraint violation
-      case 2601:
+  // MySQL errors
+  if (err.errno || err.code) {
+    switch (err.errno || err.code) {
+      case 1062: // ER_DUP_ENTRY
+      case 'ER_DUP_ENTRY':
         return res.status(409).json({ success: false, message: 'Duplicate entry. Record already exists.' });
-      case 547:  // Foreign key violation
+      case 1452: // ER_NO_REFERENCED_ROW_2
+      case 1451: // ER_ROW_IS_REFERENCED_2
+      case 'ER_NO_REFERENCED_ROW_2':
+      case 'ER_ROW_IS_REFERENCED_2':
         return res.status(400).json({ success: false, message: 'Invalid reference. Related record not found.' });
-      case 515:  // Cannot insert NULL
+      case 1048: // ER_BAD_NULL_ERROR
+      case 'ER_BAD_NULL_ERROR':
         return res.status(400).json({ success: false, message: 'Required field missing.' });
       default:
         return res.status(500).json({ success: false, message: 'Database error occurred.' });
