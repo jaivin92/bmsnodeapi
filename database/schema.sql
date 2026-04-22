@@ -386,4 +386,4 @@ VALUES (
     1
 );
 
-PRINT 'BMS Database Schema created successfully!';
+SELECT 'BMS Database Schema created successfully!' AS message;
