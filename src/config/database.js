@@ -33,7 +33,6 @@ function normalizeSql(queryText = '') {
     .replace(/CAST\(UTC_TIMESTAMP\(\)\s+AS\s+DATE\)/gi, 'UTC_DATE()')
     .replace(/DATEADD\(DAY\s*,\s*(-?\d+)\s*,\s*UTC_TIMESTAMP\(\)\)/gi, 'DATE_ADD(UTC_TIMESTAMP(), INTERVAL $1 DAY)')
     .replace(/DATEADD\(MONTH\s*,\s*(-?\d+)\s*,\s*UTC_TIMESTAMP\(\)\)/gi, 'DATE_ADD(UTC_TIMESTAMP(), INTERVAL $1 MONTH)')
-    .replace(/SELECT\s+TOP\s+(\d+)\s+/gi, 'SELECT ')
     .replace(/OFFSET\s+@([A-Za-z0-9_]+)\s+ROWS\s+FETCH\s+NEXT\s+@([A-Za-z0-9_]+)\s+ROWS\s+ONLY/gi, 'LIMIT @$2 OFFSET @$1')
     .replace(/OUTPUT\s+INSERTED\.\*/gi, 'RETURNING *')
     .replace(/OUTPUT\s+INSERTED\.([A-Za-z0-9_\s,\.]+)/gi, (_, cols) => {

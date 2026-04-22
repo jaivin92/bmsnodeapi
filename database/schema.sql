@@ -10,7 +10,7 @@ USE BuildingManagementDB;
 -- BUILDINGS
 -- ============================================================
 CREATE TABLE Buildings (
-    BuildingID      CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    BuildingID      CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingName    VARCHAR(200)    NOT NULL,
     BuildingType    VARCHAR(50)     NOT NULL CHECK (BuildingType IN ('Commercial','Residential','Apartment')),
     Address         VARCHAR(500)    NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE Buildings (
 -- WINGS / BLOCKS
 -- ============================================================
 CREATE TABLE Wings (
-    WingID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    WingID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     WingName        VARCHAR(100)    NOT NULL,
     TotalFloors     INT              NOT NULL DEFAULT 1,
@@ -44,7 +44,7 @@ CREATE TABLE Wings (
 -- UNITS / APARTMENTS / OFFICES
 -- ============================================================
 CREATE TABLE Units (
-    UnitID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    UnitID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     WingID          CHAR(36) REFERENCES Wings(WingID),
     UnitNumber      VARCHAR(20)     NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE Units (
 -- USERS
 -- ============================================================
 CREATE TABLE Users (
-    UserID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    UserID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     Email           VARCHAR(255)    NOT NULL UNIQUE,
     PasswordHash    VARCHAR(255)    NOT NULL,
     FullName        VARCHAR(200)    NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE AuditLogs (
 -- PARKING SLOTS
 -- ============================================================
 CREATE TABLE ParkingSlots (
-    SlotID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    SlotID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     SlotNumber      VARCHAR(20)     NOT NULL,
     SlotType        VARCHAR(20)     NOT NULL CHECK (SlotType IN ('Car','Bike','Truck','Handicapped')),
@@ -125,7 +125,7 @@ CREATE TABLE ParkingSlots (
 );
 
 CREATE TABLE ParkingBookings (
-    BookingID       CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    BookingID       CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     SlotID          CHAR(36) NOT NULL REFERENCES ParkingSlots(SlotID),
     UserID          CHAR(36) NOT NULL REFERENCES Users(UserID),
     VehicleNumber   VARCHAR(20)     NOT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE ParkingBookings (
 -- BILLING
 -- ============================================================
 CREATE TABLE Bills (
-    BillID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    BillID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     UnitID          CHAR(36) REFERENCES Units(UnitID),
     UserID          CHAR(36) REFERENCES Users(UserID),
@@ -168,7 +168,7 @@ CREATE TABLE Bills (
 );
 
 CREATE TABLE PaymentTransactions (
-    TransactionID   CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    TransactionID   CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BillID          CHAR(36) NOT NULL REFERENCES Bills(BillID),
     UserID          CHAR(36) NOT NULL REFERENCES Users(UserID),
     Amount          DECIMAL(12,2)    NOT NULL,
@@ -183,7 +183,7 @@ CREATE TABLE PaymentTransactions (
 -- VISITORS
 -- ============================================================
 CREATE TABLE Visitors (
-    VisitorID       CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    VisitorID       CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     ResidentID      CHAR(36) NOT NULL REFERENCES Users(UserID),
     UnitID          CHAR(36) REFERENCES Units(UnitID),
@@ -213,7 +213,7 @@ CREATE TABLE Visitors (
 -- CANTEEN / FOOD
 -- ============================================================
 CREATE TABLE CanteenMenus (
-    MenuID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    MenuID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     ItemName        VARCHAR(200)    NOT NULL,
     Description     VARCHAR(500),
@@ -230,7 +230,7 @@ CREATE TABLE CanteenMenus (
 );
 
 CREATE TABLE CanteenOrders (
-    OrderID         CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    OrderID         CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     UserID          CHAR(36) NOT NULL REFERENCES Users(UserID),
     UnitID          CHAR(36) REFERENCES Units(UnitID),
@@ -246,7 +246,7 @@ CREATE TABLE CanteenOrders (
 );
 
 CREATE TABLE CanteenOrderItems (
-    ItemID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    ItemID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     OrderID         CHAR(36) NOT NULL REFERENCES CanteenOrders(OrderID),
     MenuID          CHAR(36) NOT NULL REFERENCES CanteenMenus(MenuID),
     Quantity        INT              NOT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE CanteenOrderItems (
 -- COMPLAINTS / MAINTENANCE
 -- ============================================================
 CREATE TABLE Complaints (
-    ComplaintID     CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    ComplaintID     CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     UnitID          CHAR(36) REFERENCES Units(UnitID),
     RaisedBy        CHAR(36) NOT NULL REFERENCES Users(UserID),
@@ -279,7 +279,7 @@ CREATE TABLE Complaints (
 );
 
 CREATE TABLE ComplaintUpdates (
-    UpdateID        CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    UpdateID        CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     ComplaintID     CHAR(36) NOT NULL REFERENCES Complaints(ComplaintID),
     UpdatedBy       CHAR(36) NOT NULL REFERENCES Users(UserID),
     StatusChange    VARCHAR(30),
@@ -291,7 +291,7 @@ CREATE TABLE ComplaintUpdates (
 -- VOTING / POLLS
 -- ============================================================
 CREATE TABLE Polls (
-    PollID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    PollID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     Title           VARCHAR(300)    NOT NULL,
     Description     VARCHAR(2000),
@@ -306,14 +306,14 @@ CREATE TABLE Polls (
 );
 
 CREATE TABLE PollOptions (
-    OptionID        CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    OptionID        CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     PollID          CHAR(36) NOT NULL REFERENCES Polls(PollID),
     OptionText      VARCHAR(500)    NOT NULL,
     DisplayOrder    INT              NOT NULL DEFAULT 0
 );
 
 CREATE TABLE PollVotes (
-    VoteID          CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    VoteID          CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     PollID          CHAR(36) NOT NULL REFERENCES Polls(PollID),
     OptionID        CHAR(36) NOT NULL REFERENCES PollOptions(OptionID),
     VotedBy         CHAR(36) NOT NULL REFERENCES Users(UserID),
@@ -325,7 +325,7 @@ CREATE TABLE PollVotes (
 -- NOTICES / COMMUNICATIONS
 -- ============================================================
 CREATE TABLE Notices (
-    NoticeID        CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    NoticeID        CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     BuildingID      CHAR(36) REFERENCES Buildings(BuildingID),
     Title           VARCHAR(300)    NOT NULL,
     Content         LONGTEXT    NOT NULL,
@@ -346,7 +346,7 @@ CREATE TABLE Notices (
 -- NOTIFICATION TOKENS (Push Notifications)
 -- ============================================================
 CREATE TABLE NotificationTokens (
-    TokenID         CHAR(36) DEFAULT UUID() PRIMARY KEY,
+    TokenID         CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     UserID          CHAR(36) NOT NULL REFERENCES Users(UserID),
     FCMToken        VARCHAR(500)    NOT NULL,
     Platform        VARCHAR(10)     NOT NULL CHECK (Platform IN ('ios','android','web')),
