@@ -24,8 +24,8 @@ CREATE TABLE Buildings (
     Email           VARCHAR(200),
     LogoURL         VARCHAR(500),
     IsActive        TINYINT(1)              NOT NULL DEFAULT 1,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -37,7 +37,7 @@ CREATE TABLE Wings (
     WingName        VARCHAR(100)    NOT NULL,
     TotalFloors     INT              NOT NULL DEFAULT 1,
     IsActive        TINYINT(1)              NOT NULL DEFAULT 1,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -57,8 +57,8 @@ CREATE TABLE Units (
     MonthlyRent     DECIMAL(12,2),
     SecurityDeposit DECIMAL(12,2),
     IsActive        TINYINT(1)              NOT NULL DEFAULT 1,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (BuildingID, UnitNumber)
 );
 
@@ -86,8 +86,8 @@ CREATE TABLE Users (
     MoveOutDate     DATE,
     EmergencyContact VARCHAR(200),
     EmergencyPhone  VARCHAR(20),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -103,7 +103,7 @@ CREATE TABLE AuditLogs (
     NewValues       LONGTEXT,
     IPAddress       VARCHAR(50),
     UserAgent       VARCHAR(500),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -120,7 +120,7 @@ CREATE TABLE ParkingSlots (
     MonthlyRate     DECIMAL(10,2),
     HourlyRate      DECIMAL(8,2),
     IsActive        TINYINT(1)              NOT NULL DEFAULT 1,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (BuildingID, SlotNumber)
 );
 
@@ -137,7 +137,7 @@ CREATE TABLE ParkingBookings (
     PaymentStatus   VARCHAR(20)     DEFAULT 'Pending' CHECK (PaymentStatus IN ('Pending','Paid','Refunded')),
     QRCode          VARCHAR(500),
     Status          VARCHAR(20)     DEFAULT 'Active' CHECK (Status IN ('Active','Completed','Cancelled')),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -163,8 +163,8 @@ CREATE TABLE Bills (
     ReminderSentAt  DATETIME,
     Notes           VARCHAR(1000),
     CreatedBy       CHAR(36) REFERENCES Users(UserID),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE PaymentTransactions (
@@ -176,7 +176,7 @@ CREATE TABLE PaymentTransactions (
     TransactionRef  VARCHAR(200)    NOT NULL,
     Status          VARCHAR(20)     NOT NULL DEFAULT 'Pending' CHECK (Status IN ('Pending','Success','Failed','Refunded')),
     GatewayResponse LONGTEXT,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -205,8 +205,8 @@ CREATE TABLE Visitors (
     Status          VARCHAR(20)     NOT NULL DEFAULT 'Expected' CHECK (Status IN ('Expected','CheckedIn','CheckedOut','Denied','Cancelled')),
     VehicleNumber   VARCHAR(20),
     Notes           VARCHAR(500),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -225,8 +225,8 @@ CREATE TABLE CanteenMenus (
     DayOfWeek       VARCHAR(100),
     AvailableFrom   TIME,
     AvailableTo     TIME,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE CanteenOrders (
@@ -234,15 +234,15 @@ CREATE TABLE CanteenOrders (
     BuildingID      CHAR(36) NOT NULL REFERENCES Buildings(BuildingID),
     UserID          CHAR(36) NOT NULL REFERENCES Users(UserID),
     UnitID          CHAR(36) REFERENCES Units(UnitID),
-    OrderDate       DATE             NOT NULL DEFAULT UTC_DATE(),
+    OrderDate       DATE             NOT NULL DEFAULT (CURRENT_DATE),
     DeliveryTime    TIME,
     TotalAmount     DECIMAL(10,2)    NOT NULL,
     PaymentStatus   VARCHAR(20)     DEFAULT 'Pending' CHECK (PaymentStatus IN ('Pending','Paid','Failed')),
     OrderStatus     VARCHAR(30)     NOT NULL DEFAULT 'Placed' CHECK (OrderStatus IN ('Placed','Confirmed','Preparing','Ready','Delivered','Cancelled')),
     SpecialInstructions VARCHAR(500),
     IsSubscription  TINYINT(1)              NOT NULL DEFAULT 0,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE CanteenOrderItems (
@@ -274,8 +274,8 @@ CREATE TABLE Complaints (
     ResolvedAt      DATETIME,
     RatingByResident INT             CHECK (RatingByResident BETWEEN 1 AND 5),
     FeedbackComment VARCHAR(500),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE ComplaintUpdates (
@@ -284,7 +284,7 @@ CREATE TABLE ComplaintUpdates (
     UpdatedBy       CHAR(36) NOT NULL REFERENCES Users(UserID),
     StatusChange    VARCHAR(30),
     Comment         VARCHAR(1000)   NOT NULL,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -301,8 +301,8 @@ CREATE TABLE Polls (
     IsAnonymous     TINYINT(1)              NOT NULL DEFAULT 0,
     IsMultiChoice   TINYINT(1)              NOT NULL DEFAULT 0,
     Status          VARCHAR(20)     NOT NULL DEFAULT 'Active' CHECK (Status IN ('Draft','Active','Closed','Cancelled')),
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE PollOptions (
@@ -317,7 +317,7 @@ CREATE TABLE PollVotes (
     PollID          CHAR(36) NOT NULL REFERENCES Polls(PollID),
     OptionID        CHAR(36) NOT NULL REFERENCES PollOptions(OptionID),
     VotedBy         CHAR(36) NOT NULL REFERENCES Users(UserID),
-    VotedAt         DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
+    VotedAt         DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (PollID, OptionID, VotedBy)
 );
 
@@ -333,13 +333,13 @@ CREATE TABLE Notices (
     Priority        VARCHAR(20)     NOT NULL DEFAULT 'Normal' CHECK (Priority IN ('Low','Normal','High','Emergency')),
     TargetRole      VARCHAR(50)     DEFAULT 'All',
     PublishedBy     CHAR(36) NOT NULL REFERENCES Users(UserID),
-    PublishAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
+    PublishAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ExpiresAt       DATETIME,
     IsPushSent      TINYINT(1)              NOT NULL DEFAULT 0,
     IsEmailSent     TINYINT(1)              NOT NULL DEFAULT 0,
     AttachmentURL   VARCHAR(500),
     IsActive        TINYINT(1)              NOT NULL DEFAULT 1,
-    CreatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP()
+    CreatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -351,7 +351,7 @@ CREATE TABLE NotificationTokens (
     FCMToken        VARCHAR(500)    NOT NULL,
     Platform        VARCHAR(10)     NOT NULL CHECK (Platform IN ('ios','android','web')),
     IsActive        TINYINT(1)              NOT NULL DEFAULT 1,
-    UpdatedAt       DATETIME        NOT NULL DEFAULT UTC_TIMESTAMP(),
+    UpdatedAt       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (UserID, FCMToken)
 );
 
